@@ -20,7 +20,7 @@ app.get('/health', (req, res) => res.json({ status: 'OK' }));
 app.get('/api/records', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM records'
+      'SELECT * FROM distances'
     );
     res.json(result.rows);
   } catch (error) {

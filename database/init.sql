@@ -10,15 +10,12 @@ notes TEXT
 );
 
 CREATE TABLE IF NOT EXISTS players (
-player_id INTEGER PRIMARY KEY,
-player_name CHAR(16) NOT NULL,
-gender ENUM ( '女' , '男' )
+player_id SERIAL PRIMARY KEY,
+player_name VARCHAR(16) NOT NULL,
+gender CHAR(1) NOT NULL CHECK (gender IN ('女','男'))
 );
 
 CREATE TABLE IF NOT EXISTS distances (
 distance_id INTEGER PRIMARY KEY,
-value INTEGER NOT NULL,
+value INTEGER NOT NULL
 );
-
--- インデックスの作成（パフォーマンス向上のため）
-CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at DESC);
