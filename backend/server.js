@@ -28,6 +28,22 @@ app.get('/api/records', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch table data' });
   }
 });
+// players テーブルへ1件追加
+app.post('/api/players', async (req, res) => {
+  try {
+    const { player_name, gender } = req.body;
+
+    const result = await pool.query(
+      'INSERT INTO players (player_name, gender) VALUES ($1, $2) RETURNING *',
+      [player_name, gender]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to insert player' });
+  }
+});
 
 // シンプルなエラーハンドラ
 app.use((err, req, res, next) => {
