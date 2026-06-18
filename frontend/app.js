@@ -35,7 +35,7 @@ async function insertPlayer(event) {
 
   pre.textContent = '送信中...';
 
-  try {
+  try {//フロントからバック、バックからフロンt、どっちもやってる
     const response = await fetch(`${API_URL}/players`, {
       method: 'POST',
       headers: {
@@ -43,8 +43,9 @@ async function insertPlayer(event) {
       },
       body: JSON.stringify({ player_name: playerName, gender })
     });
-
+    console.log("response", response)
     const data = await response.json();
+    console.log("data", data)
     pre.textContent = JSON.stringify(data, null, 2);
 
     await loadTableJson();
