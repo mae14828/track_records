@@ -10,17 +10,60 @@
     <button id="showJson">JSON 表示</button>
   </div>
   <pre id="tableJson" style="white-space: pre-wrap; background:#f6f6f6; padding:8px;">読み込み待ち...</pre>
+
   
-  <form id="playerForm">
-    <input id="playerName" type="text" placeholder="player_name">
-    <input id="gender" type="text" placeholder="gender">
-    <button type="submit">追加</button>
-    
+  <h3>レコード追加</h3>
+
+  <form id="recordForm">
+
+    <input
+      id="id"
+      type="number"
+      placeholder="id">
+
+    <input
+      id="playerId"
+      type="number"
+      placeholder="player_id">
+
+    <input
+      id="distanceId"
+      type="number"
+      placeholder="distance_id">
+
+    <input
+      id="record"
+      type="time">
+
+    <input
+      id="runDate"
+      type="date">
+
+    <input
+      id="notes"
+      type="text"
+      placeholder="notes">
+
+    <button type="submit">
+      追加
+    </button>
+
   </form>
-   <form id="deleteForm">
-    <input id="deleteId" type="number" placeholder="player_id">
-    <button type="submit">削除</button>
-  </form>
+
+  <hr>
+
+  <h3>レコード削除</h3>
+
+  <form id="deleteForm">
+
+    <input
+      id="deleteId"
+      type="number"
+      placeholder="id">
+
+    <button type="submit">
+      削除
+    </button>
 
   <script src="app.js"></script>
 </body>

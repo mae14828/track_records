@@ -16,11 +16,11 @@ const pool = new Pool({
 
 app.get('/health', (req, res) => res.json({ status: 'OK' }));
 
-// 最小: 一覧取得
+// records 一覧取得
 app.get('/api/records', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM players'
+      'SELECT * FROM records ORDER BY record_id DESC'
     );
     res.json(result.rows);
   } catch (error) {
@@ -28,20 +28,35 @@ app.get('/api/records', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch table data' });
   }
 });
-// players テーブルへ1件追加
-app.post('/api/players', async (req, res) => {
+// records テーブルへ1件追加
+app.post('/api/records', async (req, res) => {
   try {
-    const { player_name, gender } = req.body;
+    const {
+      id,
+      player_id,
+      distance_id,
+      record,
+      run_date,
+      notes
+    } = req.body;//frontendから送られてきたデータを受け取る
 
     const result = await pool.query(
-      'INSERT INTO players (player_name, gender) VALUES ($1, $2) RETURNING *',
-      [player_name, gender]
+      'INSERT INTO records (id, player_id, distance_id, record, run_date, notes) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [
+        id,
+        player_id, 
+        distance_id, 
+        record, 
+        run_date, 
+        notes
+      ]
     );
 
     res.json(result.rows);
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to insert player' });
+    res.status(500).json({ error: 'Failed to insert records' });
   }
 });
 
@@ -55,11 +70,11 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend listening on ${PORT}`));
 
 // {table名} の特定 id を削除（table内id} を使用）
-app.delete('/api/players/:id', async (req, res) => {
-  const id = req.params.id;
+app.delete('/api/records/:id', async (req, res) => {
+  const id = req.params.id;//frontendから送られてきたidを受け取る
   try {
     const result = await pool.query(
-      'DELETE FROM players WHERE player_id = $1 RETURNING *',
+      'DELETE FROM records WHERE id = $1 RETURNING *',
       [id]
     );
 
@@ -67,8 +82,20 @@ app.delete('/api/players/:id', async (req, res) => {
       return res.status(404).json({ error: 'Not found' });
     }
 
-    res.json({ deleted: result.rows[0] });
+    res.json({ 
+      deleted: result.rows[0] 
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete' });
+    res.status(500).json({ 
+      error: 'Failed to delete' 
+    });
   }
+});
+
+// ここから下は、他のルートやエラーハンドリングなどを追加することができます
+//自分では理解していません。。。。。
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Backend listening on ${PORT}`);
 });

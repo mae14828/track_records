@@ -27,26 +27,30 @@ async function loadTableJson() {
   }
 }
 
-async function insertPlayer(event) {
+async function insertRecord(event) {
   event.preventDefault();
 
   const pre = document.getElementById('tableJson');
   if (!pre) return;
 
-  const playerName = document.getElementById('playerName').value;
-  const gender = document.getElementById('gender').value;
+  const id = document.getElementById('id').value
+  const player_id = document.getElementById('player_id').value
+  const distance_id = document.getElementById('distance_id').value
+  const record = document.getElementById('record').value
+  const run_date = document.getElementById('run_date').value
+  const notes = document.getElementById('notes').value
 
   pre.textContent = '送信中...';
 
   try {//フロントからバック、バックからフロンt、どっちもやってる
-    const response = await fetch(`${API_URL}/players`, {
+    const response = await fetch(`${API_URL}/records`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ player_name: playerName, gender })
+      body: JSON.stringify({ id, player_id, distance_id, record, run_date, notes })
     });
-    console.log("response", response)
+    
     const data = await response.json();
     console.log("data", data)
     pre.textContent = JSON.stringify(data, null, 2);
