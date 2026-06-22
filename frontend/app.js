@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('playerForm');
   if (form) form.addEventListener('submit', insertPlayer);
 
+  const deleteForm = document.getElementById('deleteForm');
+  if (deleteForm) deleteForm.addEventListener('submit', deletePlayer);
+
   loadTableJson();
 });
 
@@ -49,6 +52,41 @@ async function insertPlayer(event) {
     pre.textContent = JSON.stringify(data, null, 2);
 
     await loadTableJson();
+  } catch (error) {
+    pre.textContent = `エラー: ${error.message}`;
+  }
+}
+
+async function deletePlayer(event) {
+  event.preventDefault();
+
+  const pre = document.getElementById('tableJson');
+  const playerId = document.getElementById('deleteId').value;
+
+  if (!playerId) {
+    pre.textContent = 'player_idを入力してください';
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_URL}/players/${playerId}`,
+      {
+        method: 'DELETE'
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || '削除失敗');
+    }
+
+    pre.textContent =
+      `削除成功\n${JSON.stringify(data, null, 2)}`;
+
+    await loadTableJson();
+
   } catch (error) {
     pre.textContent = `エラー: ${error.message}`;
   }

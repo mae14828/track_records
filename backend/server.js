@@ -53,3 +53,22 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend listening on ${PORT}`));
+
+// {table名} の特定 id を削除（table内id} を使用）
+app.delete('/api/players/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await pool.query(
+      'DELETE FROM players WHERE player_id = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    res.json({ deleted: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete' });
+  }
+});
