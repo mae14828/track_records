@@ -61,6 +61,8 @@ async function insertRecord(event) {
   }
 }
 
+
+//ここからまだ理解していません
 async function deletePlayer(event) {
   event.preventDefault();
 
