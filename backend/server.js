@@ -32,7 +32,6 @@ app.get('/api/records', async (req, res) => {
 app.post('/api/records', async (req, res) => {
   try {
     const {
-      id,
       player_id,
       distance_id,
       record,
@@ -41,9 +40,8 @@ app.post('/api/records', async (req, res) => {
     } = req.body;//frontendから送られてきたデータを受け取る
 
     const result = await pool.query(
-      'INSERT INTO records (id, player_id, distance_id, record, run_date, notes) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      'INSERT INTO records (player_id, distance_id, record, run_date, notes) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [
-        id,
         player_id, 
         distance_id, 
         record, 
