@@ -20,7 +20,7 @@ app.get('/health', (req, res) => res.json({ status: 'OK' }));
 app.get('/api/records', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM records ORDER BY record_id DESC'
+      'SELECT * FROM records ORDER BY id DESC'
     );
     res.json(result.rows);
   } catch (error) {
@@ -86,6 +86,7 @@ app.delete('/api/records/:id', async (req, res) => {
       deleted: result.rows[0] 
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ 
       error: 'Failed to delete' 
     });
@@ -94,8 +95,8 @@ app.delete('/api/records/:id', async (req, res) => {
 
 // ここから下は、他のルートやエラーハンドリングなどを追加することができます
 //自分では理解していません。。。。。
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Backend listening on ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Backend listening on ${PORT}`);
+// });

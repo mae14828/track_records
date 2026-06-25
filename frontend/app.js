@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('showJson');
   if (btn) btn.addEventListener('click', loadTableJson);
 
-  const form = document.getElementById('playerForm');
-  if (form) form.addEventListener('submit', insertPlayer);
+  const form = document.getElementById('recordForm');
+  if (form) form.addEventListener('submit', insertRecord);
 
   const deleteForm = document.getElementById('deleteForm');
   if (deleteForm) deleteForm.addEventListener('submit', deletePlayer);
@@ -29,19 +29,19 @@ async function loadTableJson() {
 
 async function insertRecord(event) {
   event.preventDefault();
-
+/*
   const pre = document.getElementById('tableJson');
   if (!pre) return;
-
+*/
   const id = document.getElementById('id').value
   const player_id = document.getElementById('player_id').value
   const distance_id = document.getElementById('distance_id').value
   const record = document.getElementById('record').value
   const run_date = document.getElementById('run_date').value
   const notes = document.getElementById('notes').value
-
+/*
   pre.textContent = '送信中...';
-
+*/
   try {//フロントからバック、バックからフロンt、どっちもやってる
     const response = await fetch(`${API_URL}/records`, {
       method: 'POST',
@@ -67,16 +67,16 @@ async function deletePlayer(event) {
   event.preventDefault();
 
   const pre = document.getElementById('tableJson');
-  const playerId = document.getElementById('deleteId').value;
+  const record_id = document.getElementById('deleteId').value;
 
-  if (!playerId) {
-    pre.textContent = 'player_idを入力してください';
+  if (!record_id) {
+    pre.textContent = 'record_idを入力してください';
     return;
   }
 
   try {
     const response = await fetch(
-      `${API_URL}/players/${playerId}`,
+      `${API_URL}/records/${record_id}`,
       {
         method: 'DELETE'
       }
