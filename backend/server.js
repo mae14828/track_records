@@ -16,11 +16,21 @@ const pool = new Pool({
 
 app.get('/health', (req, res) => res.json({ status: 'OK' }));
 
-// records 一覧取得
+// records 一覧取得（distances テーブルを結合して value も取得する）
 app.get('/api/records', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM records ORDER BY id DESC'
+      `SELECT 
+        r.id, 
+        r.player_id, 
+        r.distance_id, 
+        d.value AS distance_value, 
+        r.record, 
+        r.run_date, 
+        r.notes 
+       FROM records r
+       INNER JOIN distances d ON r.distance_id = d.distance_id
+       ORDER BY r.id DESC`
     );
     res.json(result.rows);
   } catch (error) {

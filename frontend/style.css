@@ -60,3 +60,33 @@ button {
 .error-message {
   color: red;
 }
+/* --- テーブルのスタイル設定 --- */
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  margin-bottom: 25px;
+  font-size: 0.95em;
+}
+
+.record-table th, 
+.record-table td {
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.record-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+/* 1行おきに背景色を変えて見やすくする（シマシマにする） */
+.record-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* マウスを乗せた行を目立たせる */
+.record-table tr:hover {
+  background-color: #f1f1f1;
+}

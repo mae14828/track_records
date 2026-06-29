@@ -7,11 +7,9 @@
 </head>
 <body>
   <div>
-    <button id="showJson">JSON 表示</button>
+    <button id="showJson">表示</button>
   </div>
-  <pre id="tableJson" style="white-space: pre-wrap; background:#f6f6f6; padding:8px;">読み込み待ち...</pre>
-
-  
+  <div id="tableContainer">「表示」ボタンを押すか、データを読み込んでください。</div>
   <h3>レコード追加</h3>
 
   <form id="recordForm">
@@ -60,6 +58,7 @@
     <button type="submit">
       削除
     </button>
+  </form>
 
   <script src="app.js"></script>
 </body>
