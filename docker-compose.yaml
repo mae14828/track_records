@@ -39,6 +39,8 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres_tutorial
+      TZ: Asia/Tokyo
+      PGTZ: Asia/Tokyo
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql

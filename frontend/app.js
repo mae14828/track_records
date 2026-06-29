@@ -29,10 +29,10 @@ async function loadTableJson() {
 
 async function insertRecord(event) {
   event.preventDefault();
-/*
+
   const pre = document.getElementById('tableJson');
   if (!pre) return;
-*/
+
   // const id = document.getElementById('id').value
   const player_id = document.getElementById('player_id').value
   const distance_id = document.getElementById('distance_id').value

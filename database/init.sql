@@ -4,7 +4,7 @@ id SERIAL PRIMARY KEY,
 player_id SERIAL NOT NULL,
 distance_id SERIAL NOT NULL,
 record TIME NOT NULL,
-created_at TIMESTAMP,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 run_date DATE NOT NULL,
 notes TEXT
 );
