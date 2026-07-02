@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const playerForm = document.getElementById("playerForm");
   if (playerForm) playerForm.addEventListener("submit", insertPlayer);
 
+  const playerDeleteForm = document.getElementById("playerDeleteForm");
+  if (playerDeleteForm) {
+    playerDeleteForm.addEventListener("submit", deletePlayerById);
+  }
+
   loadPlayers();
 });
 
@@ -204,4 +209,45 @@ async function deletePlayer(event) {
     /* pre.textContent = `エラー: ${error.message}`; */
     alert(`エラー: ${error.message}`);
   }
+}
+// プレイヤーを削除する関数
+async function deletePlayerById(event) {
+
+    event.preventDefault();
+
+    const player_id =
+        document.getElementById("deletePlayerId").value;
+
+    if (!player_id) {
+        alert("player_idを入力してください");
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/players/${player_id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error);
+        }
+
+        alert("削除しました");
+
+        loadPlayers();
+
+        event.target.reset();
+
+    } catch (error) {
+
+        alert(error.message);
+
+    }
+
 }

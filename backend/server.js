@@ -131,7 +131,39 @@ app.post("/api/players", async (req,res)=>{
   res.json(result.rows);
 
 });
+// players削除
+app.delete("/api/players/:id", async (req, res) => {
 
+    const id = req.params.id;
+
+    try {
+
+        const result = await pool.query(
+            "DELETE FROM players WHERE player_id = $1 RETURNING *",
+            [id]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({
+                error: "該当するplayer_idがありません"
+            });
+        }
+
+        res.json({
+            deleted: result.rows[0]
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            error: "削除に失敗しました"
+        });
+
+    }
+
+});
 
 // ここから下は、他のルートやエラーハンドリングなどを追加することができます
 //自分では理解していません。。。。。
