@@ -1,53 +1,170 @@
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --panel: rgba(10, 19, 35, 0.82);
+  --panel-strong: #111c31;
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #f8fbff;
+  --muted: #94a3b8;
+  --accent: linear-gradient(135deg, #7c3aed, #0ea5e9);
+  --accent-soft: rgba(14, 165, 233, 0.16);
+  --shadow: 0 20px 45px rgba(2, 8, 23, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: sans-serif;
-  max-width: 800px;
+  margin: 0;
+  font-family: Inter, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.22), transparent 24%),
+    linear-gradient(135deg, #030712 0%, var(--bg) 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.app-shell {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 32px 20px 48px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #7dd3fc;
 }
 
 h1, h2 {
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin: 0;
 }
 
-input[type="text"],
-input[type="datetime-local"],
-textarea {
-  width: 100%;
-  padding: 5px;
-  margin: 5px 0;
-  font-family: inherit;
+.subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.primary-btn,
+.secondary-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 10px 24px rgba(14, 165, 233, 0.25);
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+  transform: translateY(-1px);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.card {
+  padding: 22px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.hero-card {
+  grid-column: 1 / -1;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 label {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+label span {
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(125, 211, 252, 0.4);
+  border-color: #38bdf8;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.inline-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.table-block {
   margin-top: 10px;
-  margin-bottom: 3px;
-  font-weight: bold;
-}
-
-button {
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.task-item {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.task-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.task-time,
-.task-note,
-.task-date {
-  margin: 5px 0;
-  font-size: 0.9em;
-  color: #666;
+  color: var(--muted);
 }
 
 .loading,
@@ -55,38 +172,60 @@ button {
 .error-message {
   padding: 20px;
   text-align: center;
+  border-radius: 14px;
+  background: var(--accent-soft);
 }
 
 .error-message {
-  color: red;
+  color: #fda4af;
 }
-/* --- テーブルのスタイル設定 --- */
+
 .record-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
-  margin-bottom: 25px;
+  margin-top: 12px;
+  margin-bottom: 10px;
   font-size: 0.95em;
 }
 
-.record-table th, 
+.record-table th,
 .record-table td {
-  border: 1px solid #ddd;
-  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 10px;
   text-align: left;
 }
 
 .record-table th {
-  background-color: #f4f4f4;
-  font-weight: bold;
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 700;
 }
 
-/* 1行おきに背景色を変えて見やすくする（シマシマにする） */
 .record-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background: rgba(255, 255, 255, 0.025);
 }
 
-/* マウスを乗せた行を目立たせる */
 .record-table tr:hover {
-  background-color: #f1f1f1;
+  background: rgba(14, 165, 233, 0.12);
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
