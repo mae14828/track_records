@@ -10,7 +10,7 @@
     <button id="showJson">表示</button>
   </div>
   <div id="tableContainer">「表示」ボタンを押すか、データを読み込んでください。</div>
-  <h3>レコード追加</h3>
+  <h3>記録の追加</h3>
 
   <form id="recordForm">
 
@@ -19,15 +19,16 @@
       type="number"
       placeholder="player_id">
 
-    <input
-      id="distance_id"
-      type="number"
-      placeholder="distance_id">
+    <select id="distance_id">
+  <option value="1">1000m</option>
+  <option value="2">1500m</option>
+  <option value="3">3000m</option>
+</select>
 
     <input
       id="record"
       type="text"
-      placeholder="record">
+      placeholder="00:00:00">
 
     <input
       id="run_date"
@@ -36,7 +37,7 @@
     <input
       id="notes"
       type="text"
-      placeholder="notes">
+      placeholder="備考">
 
     <button type="submit">
       追加
@@ -46,14 +47,14 @@
 
   <hr>
 
-  <h3>レコード削除</h3>
+  <h3>記録の削除</h3>
 
   <form id="deleteForm">
 
     <input
       id="deleteId"
       type="number"
-      placeholder="id">
+      placeholder="idを入力">
 
     <button type="submit">
       削除
