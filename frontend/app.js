@@ -30,21 +30,35 @@ async function loadTableJson() {
   container.textContent = '読み込み中...';
 
   try {
-    const response = await fetch(`${API_URL}/records`);
-    const tableData = await response.json();
+    const [recordsResponse, playersResponse] = await Promise.all([
+      fetch(`${API_URL}/records`),
+      fetch(`${API_URL}/players`)
+    ]);
+
+    if (!recordsResponse.ok) {
+      throw new Error('recordsの取得に失敗しました');
+    }
+
+    if (!playersResponse.ok) {
+      throw new Error('playersの取得に失敗しました');
+    }
+
+    const tableData = await recordsResponse.json();
+    const players = await playersResponse.json();
+    const playerMap = new Map(players.map(player => [String(player.player_id), player]));
 
     if (tableData.length === 0) {
       container.textContent = 'データがありません。';
       return;
     }
 
-    // テーブルのHTMLを組み立てる
     let tableHtml = `
       <table class="record-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Player ID</th>
+            <th>選手名</th>
+            <th>性別</th>
             <th>距離</th>
             <th>記録</th>
             <th>走った日</th>
@@ -55,15 +69,16 @@ async function loadTableJson() {
     `;
 
     tableData.forEach(row => {
-      // ★ サーバー（SQLの結合）から届いた distance_value をそのまま使う
-      // 画面で見やすいように後ろに 「m」 をつけています
+      const player = playerMap.get(String(row.player_id)) || {};
       const distanceDisplay = row.distance_value ? `${row.distance_value}m` : `ID: ${row.distance_id}`;
 
       tableHtml += `
         <tr>
           <td>${row.id}</td>
-          <td>${row.player_id}</td>
-          <td>${distanceDisplay}</td> <td>${row.record}</td>
+          <td>${player.player_name || '不明'}</td>
+          <td>${player.gender || '-'}</td>
+          <td>${distanceDisplay}</td>
+          <td>${row.record}</td>
           <td>${row.run_date ? row.run_date.substring(0, 10) : ''}</td>
           <td>${row.notes || ''}</td>
         </tr>
