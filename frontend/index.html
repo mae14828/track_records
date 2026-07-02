@@ -61,6 +61,39 @@
     </button>
   </form>
 
+  <hr>
+
+<h3>Players追加</h3>
+
+<form id="playerForm">
+
+  <input
+    id="player_id_input"
+    type="number"
+    placeholder="player_id">
+
+  <input
+    id="player_name"
+    type="text"
+    placeholder="player_name">
+
+  <select id="gender">
+    <option value="男">男</option>
+    <option value="女">女</option>
+  </select>
+
+  <button type="submit">
+    追加
+  </button>
+
+</form>
+
+<h3>Players一覧</h3>
+
+<div id="playerTableContainer">
+  読み込み中...
+</div>
+
   <script src="app.js"></script>
 </body>
 </html>

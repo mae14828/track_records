@@ -101,6 +101,38 @@ app.delete('/api/records/:id', async (req, res) => {
   }
 });
 
+// プレイヤー一覧を取得
+app.get("/api/players", async (req,res)=>{
+
+  const result = await pool.query(
+    "SELECT * FROM players ORDER BY player_id"
+  );
+
+  res.json(result.rows);
+
+});
+// プレイヤーを追加
+app.post("/api/players", async (req,res)=>{
+
+  const {
+    player_id,
+    player_name,
+    gender
+  } = req.body;
+
+  const result = await pool.query(
+    `INSERT INTO players
+    (player_id, player_name, gender)
+    VALUES ($1,$2,$3)
+    RETURNING *`,
+    [player_id,player_name,gender]
+  );
+
+  res.json(result.rows);
+
+});
+
+
 // ここから下は、他のルートやエラーハンドリングなどを追加することができます
 //自分では理解していません。。。。。
 // const PORT = process.env.PORT || 5000;

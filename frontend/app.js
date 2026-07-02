@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (deleteForm) deleteForm.addEventListener('submit', deletePlayer);
 
   loadTableJson();
+
+  const playerForm = document.getElementById("playerForm");
+  if (playerForm) playerForm.addEventListener("submit", insertPlayer);
+
+  loadPlayers();
 });
 
 // テーブルを生成して表示する関数
@@ -106,8 +111,65 @@ async function insertRecord(event) {
   }
 }
 
+// プレイヤー一覧を取得して表示する関数
+async function loadPlayers() {
 
-//ここからまだ理解していません
+  const container = document.getElementById("playerTableContainer");
+
+  const response = await fetch(`${API_URL}/players`);
+  const players = await response.json();
+
+  let html = `
+  <table border="1">
+    <tr>
+      <th>player_id</th>
+      <th>player_name</th>
+      <th>gender</th>
+    </tr>
+  `;
+
+  players.forEach(player => {
+    html += `
+      <tr>
+        <td>${player.player_id}</td>
+        <td>${player.player_name}</td>
+        <td>${player.gender}</td>
+      </tr>
+    `;
+  });
+
+  html += "</table>";
+
+  container.innerHTML = html;
+}
+// プレイヤーを追加する関数
+async function insertPlayer(event){
+
+  event.preventDefault();
+
+  const player_id = document.getElementById("player_id_input").value;
+  const player_name = document.getElementById("player_name").value;
+  const gender = document.getElementById("gender").value;
+
+  await fetch(`${API_URL}/players`,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      player_id,
+      player_name,
+      gender
+    })
+  });
+
+  loadPlayers();
+
+  event.target.reset();
+}
+
+
+// レコードを削除する関数
 async function deletePlayer(event) {
   event.preventDefault();
 
