@@ -1,27 +1,87 @@
 const API_URL = 'http://localhost:5000/api';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('showJson');
-  if (btn) btn.addEventListener('click', loadTableJson);
-
-  const form = document.getElementById('recordForm');
-  if (form) form.addEventListener('submit', insertRecord);
-
-  const deleteForm = document.getElementById('deleteForm');
-  if (deleteForm) deleteForm.addEventListener('submit', deletePlayer);
-
-  loadTableJson();
-
-  const playerForm = document.getElementById("playerForm");
-  if (playerForm) playerForm.addEventListener("submit", insertPlayer);
-
-  const playerDeleteForm = document.getElementById("playerDeleteForm");
-  if (playerDeleteForm) {
-    playerDeleteForm.addEventListener("submit", deletePlayerById);
-  }
-
+  // Initial data load
+  loadRecords();
   loadPlayers();
 });
+
+// ==================== RECORDS FUNCTIONS ====================
+
+// Load and display records
+async function loadRecords() {
+  const container = document.getElementById('recordTableContainer');
+  if (!container) return;
+  
+  container.textContent = '読み込み中...';
+
+  try {
+    const [recordsResponse, playersResponse] = await Promise.all([
+      fetch(`${API_URL}/records`),
+      fetch(`${API_URL}/players`)
+    ]);
+
+    if (!recordsResponse.ok) {
+      throw new Error('記録の取得に失敗しました');
+    }
+
+    if (!playersResponse.ok) {
+      throw new Error('選手情報の取得に失敗しました');
+    }
+
+    const records = await recordsResponse.json();
+    const players = await playersResponse.json();
+    const playerMap = new Map(players.map(p => [String(p.player_id), p]));
+
+    if (records.length === 0) {
+      container.textContent = 'データがありません。';
+      return;
+    }
+
+    let tableHtml = `
+      <table class="record-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>選手名</th>
+            <th>性別</th>
+            <th>距離</th>
+            <th>記録</th>
+            <th>日付</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    records.forEach(record => {
+      const player = playerMap.get(String(record.player_id)) || {};
+      const distance = record.distance_value ? `${record.distance_value}m` : `ID:${record.distance_id}`;
+
+      tableHtml += `
+        <tr>
+          <td>${record.id}</td>
+          <td>${player.player_name || '不明'}</td>
+          <td>${player.gender || '-'}</td>
+          <td>${distance}</td>
+          <td>${record.record}</td>
+          <td>${record.run_date ? record.run_date.substring(0, 10) : ''}</td>
+          <td>${record.notes || ''}</td>
+        </tr>
+      `;
+    });
+
+    tableHtml += `
+        </tbody>
+      </table>
+    `;
+
+    container.innerHTML = tableHtml;
+
+  } catch (error) {
+    container.textContent = `エラー: ${error.message}`;
+  }
+}
 
 // テーブルを生成して表示する関数
 async function loadTableJson() {
@@ -100,169 +160,193 @@ async function loadTableJson() {
 async function insertRecord(event) {
   event.preventDefault();
 
- /* const pre = document.getElementById('tableJson');
-  if (!pre) return;*/
+  const playerId = document.getElementById('recordPlayerId').value;
+  const distanceId = document.getElementById('distanceId').value;
+  const recordTime = document.getElementById('recordTime').value;
+  const runDate = document.getElementById('runDate').value;
+  const notes = document.getElementById('recordNotes').value;
 
-  // const id = document.getElementById('id').value
-  const player_id = document.getElementById('player_id').value
-  const distance_id = document.getElementById('distance_id').value
-  const record = document.getElementById('record').value
-  const run_date = document.getElementById('run_date').value
-  const notes = document.getElementById('notes').value
-/*
-  pre.textContent = '送信中...';
-*/
-  try {//フロントからバック、バックからフロンt、どっちもやってる
+  try {
     const response = await fetch(`${API_URL}/records`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ player_id, distance_id, record, run_date, notes })
+      body: JSON.stringify({
+        player_id: playerId,
+        distance_id: distanceId,
+        record: recordTime,
+        run_date: runDate,
+        notes: notes
+      })
     });
-    
-    const data = await response.json();
-    console.log("data", data)
-    /* pre.textContent = JSON.stringify(data, null, 2); */
 
-    await loadTableJson();
+    if (!response.ok) {
+      throw new Error('記録の追加に失敗しました');
+    }
+
+    alert('記録を追加しました');
+    document.getElementById('recordForm').reset();
+    loadRecords();
+
   } catch (error) {
-    /* pre.textContent = `エラー: ${error.message}`; */
+    alert(`エラー: ${error.message}`);
   }
 }
 
-// プレイヤー一覧を取得して表示する関数
-async function loadPlayers() {
-
-  const container = document.getElementById("playerTableContainer");
-
-  const response = await fetch(`${API_URL}/players`);
-  const players = await response.json();
-
-  let html = `
-  <table border="1">
-    <tr>
-      <th>player_id</th>
-      <th>player_name</th>
-      <th>gender</th>
-    </tr>
-  `;
-
-  players.forEach(player => {
-    html += `
-      <tr>
-        <td>${player.player_id}</td>
-        <td>${player.player_name}</td>
-        <td>${player.gender}</td>
-      </tr>
-    `;
-  });
-
-  html += "</table>";
-
-  container.innerHTML = html;
-}
-// プレイヤーを追加する関数
-async function insertPlayer(event){
-
+// Delete record
+async function deleteRecord(event) {
   event.preventDefault();
 
-  const player_id = document.getElementById("player_id_input").value;
-  const player_name = document.getElementById("player_name").value;
-  const gender = document.getElementById("gender").value;
+  const recordId = document.getElementById('deleteRecordId').value;
 
-  await fetch(`${API_URL}/players`,{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      player_id,
-      player_name,
-      gender
-    })
-  });
+  if (!recordId) {
+    alert('削除する記録のIDを入力してください');
+    return;
+  }
 
-  loadPlayers();
-
-  event.target.reset();
-}
-
-
-// レコードを削除する関数
-async function deletePlayer(event) {
-  event.preventDefault();
-
- // const pre = document.getElementById('tableJson');
-  const record_id = document.getElementById('deleteId').value;
-
-  if (!record_id) {
-    alert('削除するレコードのIDを入力してください。');
+  if (!confirm('この記録を削除してもよろしいですか？')) {
     return;
   }
 
   try {
-    const response = await fetch(
-      `${API_URL}/records/${record_id}`,
-      {
-        method: 'DELETE'
-      }
-    );
-
-    const data = await response.json();
+    const response = await fetch(`${API_URL}/records/${recordId}`, {
+      method: 'DELETE'
+    });
 
     if (!response.ok) {
-      throw new Error(data.error || '削除失敗');
+      throw new Error('記録の削除に失敗しました');
     }
 
-    /* pre.textContent =
-      `削除成功\n${JSON.stringify(data, null, 2)}`; */
-
-    await loadTableJson();
+    alert('記録を削除しました');
+    document.getElementById('deleteRecordForm').reset();
+    loadRecords();
 
   } catch (error) {
-    /* pre.textContent = `エラー: ${error.message}`; */
     alert(`エラー: ${error.message}`);
   }
 }
-// プレイヤーを削除する関数
-async function deletePlayerById(event) {
 
-    event.preventDefault();
+// ==================== PLAYERS FUNCTIONS ====================
 
-    const player_id =
-        document.getElementById("deletePlayerId").value;
+// Load and display players
+async function loadPlayers() {
+  const container = document.getElementById('playerTableContainer');
+  if (!container) return;
 
-    if (!player_id) {
-        alert("player_idを入力してください");
-        return;
+  container.textContent = '読み込み中...';
+
+  try {
+    const response = await fetch(`${API_URL}/players`);
+
+    if (!response.ok) {
+      throw new Error('選手情報の取得に失敗しました');
     }
 
-    try {
+    const players = await response.json();
 
-        const response = await fetch(
-            `${API_URL}/players/${player_id}`,
-            {
-                method: "DELETE"
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error);
-        }
-
-        alert("削除しました");
-
-        loadPlayers();
-
-        event.target.reset();
-
-    } catch (error) {
-
-        alert(error.message);
-
+    if (players.length === 0) {
+      container.textContent = 'データがありません。';
+      return;
     }
 
+    let tableHtml = `
+      <table class="record-table">
+        <thead>
+          <tr>
+            <th>選手ID</th>
+            <th>選手名</th>
+            <th>性別</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    players.forEach(player => {
+      tableHtml += `
+        <tr>
+          <td>${player.player_id}</td>
+          <td>${player.player_name}</td>
+          <td>${player.gender}</td>
+        </tr>
+      `;
+    });
+
+    tableHtml += `
+        </tbody>
+      </table>
+    `;
+
+    container.innerHTML = tableHtml;
+
+  } catch (error) {
+    container.textContent = `エラー: ${error.message}`;
+  }
+}
+
+// Insert new player
+async function insertPlayer(event) {
+  event.preventDefault();
+
+  const playerId = document.getElementById('newPlayerId').value;
+  const playerName = document.getElementById('newPlayerName').value;
+  const gender = document.getElementById('newPlayerGender').value;
+
+  try {
+    const response = await fetch(`${API_URL}/players`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        player_id: playerId,
+        player_name: playerName,
+        gender: gender
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('選手の追加に失敗しました');
+    }
+
+    alert('選手を追加しました');
+    document.getElementById('playerForm').reset();
+    loadPlayers();
+
+  } catch (error) {
+    alert(`エラー: ${error.message}`);
+  }
+}
+
+// Delete player
+async function deletePlayer(event) {
+  event.preventDefault();
+
+  const playerId = document.getElementById('deletePlayerId').value;
+
+  if (!playerId) {
+    alert('削除する選手のIDを入力してください');
+    return;
+  }
+
+  if (!confirm('この選手を削除してもよろしいですか？')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/players/${playerId}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      throw new Error('選手の削除に失敗しました');
+    }
+
+    alert('選手を削除しました');
+    document.getElementById('deletePlayerForm').reset();
+    loadPlayers();
+
+  } catch (error) {
+    alert(`エラー: ${error.message}`);
+  }
 }
