@@ -63,6 +63,7 @@ async function loadTableJson() {
             <th>記録</th>
             <th>走った日</th>
             <th>備考</th>
+            <th>削除</th>
           </tr>
         </thead>
         <tbody>
@@ -81,6 +82,9 @@ async function loadTableJson() {
           <td>${row.record}</td>
           <td>${row.run_date ? row.run_date.substring(0, 10) : ''}</td>
           <td>${row.notes || ''}</td>
+          <td>
+            <button class="delete-record-btn" data-id="${row.id}" style="cursor: pointer; padding: 4px 8px; background-color: #ff6b6b; color: white; border: none; border-radius: 4px;">削除</button>
+          </td>
         </tr>
       `;
     });
@@ -91,6 +95,16 @@ async function loadTableJson() {
     `;
 
     container.innerHTML = tableHtml;
+
+    // 削除ボタンのイベントリスナーを追加
+    document.querySelectorAll('.delete-record-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.getAttribute('data-id');
+        if (confirm(`削除しますか？`)) {
+          await deleteRecordFromTable(id);
+        }
+      });
+    });
 
   } catch (error) {
     container.textContent = `エラー: ${error.message}`;
@@ -188,6 +202,30 @@ async function insertPlayer(event){
   event.target.reset();
 }
 
+
+// テーブルの削除ボタンから呼ばれる削除関数
+async function deleteRecordFromTable(record_id) {
+  try {
+    const response = await fetch(
+      `${API_URL}/records/${record_id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || '削除失敗');
+    }
+
+    alert('レコードが削除されました。');
+    await loadTableJson();
+
+  } catch (error) {
+    alert(`エラー: ${error.message}`);
+  }
+}
 
 // レコードを削除する関数
 async function deletePlayer(event) {
