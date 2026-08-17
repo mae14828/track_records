@@ -7,18 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('recordForm');
   if (form) form.addEventListener('submit', insertRecord);
 
-  const deleteForm = document.getElementById('deleteForm');
-  if (deleteForm) deleteForm.addEventListener('submit', deletePlayer);
-
   loadTableJson();
 
   const playerForm = document.getElementById("playerForm");
   if (playerForm) playerForm.addEventListener("submit", insertPlayer);
-
-  const playerDeleteForm = document.getElementById("playerDeleteForm");
-  if (playerDeleteForm) {
-    playerDeleteForm.addEventListener("submit", deletePlayerById);
-  }
 
   loadPlayers();
 });
@@ -154,12 +146,16 @@ async function loadPlayers() {
   const players = await response.json();
 
   let html = `
-  <table border="1">
-    <tr>
-      <th>player_id</th>
-      <th>player_name</th>
-      <th>gender</th>
-    </tr>
+  <table class="record-table">
+    <thead>
+      <tr>
+        <th>player_id</th>
+        <th>player_name</th>
+        <th>gender</th>
+        <th>削除</th>
+      </tr>
+    </thead>
+    <tbody>
   `;
 
   players.forEach(player => {
@@ -168,13 +164,28 @@ async function loadPlayers() {
         <td>${player.player_id}</td>
         <td>${player.player_name}</td>
         <td>${player.gender}</td>
+        <td>
+          <button class="delete-player-btn" data-player-id="${player.player_id}" style="cursor: pointer; padding: 4px 8px; background-color: #ff6b6b; color: white; border: none; border-radius: 4px;">削除</button>
+        </td>
       </tr>
     `;
   });
 
-  html += "</table>";
+  html += `
+    </tbody>
+  </table>`;
 
   container.innerHTML = html;
+
+  // 削除ボタンのイベントリスナーを追加
+  document.querySelectorAll('.delete-player-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const playerId = e.target.getAttribute('data-player-id');
+      if (confirm(`player_id ${playerId} を削除しますか？`)) {
+        await deletePlayerFromTable(playerId);
+      }
+    });
+  });
 }
 // プレイヤーを追加する関数
 async function insertPlayer(event){
@@ -227,23 +238,14 @@ async function deleteRecordFromTable(record_id) {
   }
 }
 
-// レコードを削除する関数
-async function deletePlayer(event) {
-  event.preventDefault();
 
- // const pre = document.getElementById('tableJson');
-  const record_id = document.getElementById('deleteId').value;
-
-  if (!record_id) {
-    alert('削除するレコードのIDを入力してください。');
-    return;
-  }
-
+// プレイヤーを削除する関数
+async function deletePlayerFromTable(player_id) {
   try {
     const response = await fetch(
-      `${API_URL}/records/${record_id}`,
+      `${API_URL}/players/${player_id}`,
       {
-        method: 'DELETE'
+        method: "DELETE"
       }
     );
 
@@ -253,54 +255,10 @@ async function deletePlayer(event) {
       throw new Error(data.error || '削除失敗');
     }
 
-    /* pre.textContent =
-      `削除成功\n${JSON.stringify(data, null, 2)}`; */
-
-    await loadTableJson();
+    alert('選手が削除されました。');
+    await loadPlayers();
 
   } catch (error) {
-    /* pre.textContent = `エラー: ${error.message}`; */
     alert(`エラー: ${error.message}`);
   }
-}
-// プレイヤーを削除する関数
-async function deletePlayerById(event) {
-
-    event.preventDefault();
-
-    const player_id =
-        document.getElementById("deletePlayerId").value;
-
-    if (!player_id) {
-        alert("player_idを入力してください");
-        return;
-    }
-
-    try {
-
-        const response = await fetch(
-            `${API_URL}/players/${player_id}`,
-            {
-                method: "DELETE"
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error);
-        }
-
-        alert("削除しました");
-
-        loadPlayers();
-
-        event.target.reset();
-
-    } catch (error) {
-
-        alert(error.message);
-
-    }
-
 }
