@@ -10,64 +10,67 @@
   <div class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow"></p>
+        <p class="eyebrow">AI-powered training workspace</p>
         <h1>ランニング記録管理</h1>
         <p class="subtitle">個人的なランニング記録を管理</p>
       </div>
-      <button id="showJson" class="primary-btn">表示</button>
     </header>
 
     <main class="dashboard-grid">
-      <section class="card hero-card">
-        <div class="card-header">
-          <div>
-            <p class="eyebrow">記録一覧</p>
-            <h2>最新のランニング結果</h2>
+      <!-- RECORDS SECTION -->
+      <div class="section-group records-group">
+        <section class="card hero-card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">記録一覧</p>
+              <h2>最新のランニング結果</h2>
+            </div>
+            <button id="loadRecordsBtn" class="primary-btn">表示</button>
           </div>
-        </div>
-        <div id="tableContainer" class="table-block">「表示」ボタンを押すか、データを読み込んでください。</div>
-      </section>
+          <div id="recordTableContainer" class="table-block">「表示」ボタンを押すか、データを読み込んでください。</div>
+        </section>
 
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <p class="eyebrow">記録の追加</p>
-            <h2>新しい結果を登録</h2>
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">記録の追加</p>
+              <h2>新しい結果を登録</h2>
+            </div>
           </div>
-        </div>
-        <form id="recordForm" class="form-grid">
-          <label>
-            <span>player_id</span>
-            <input id="player_id" type="number" placeholder="player_id">
-          </label>
+          <form id="recordForm" class="form-grid">
+            <label>
+              <span>player_id</span>
+              <input id="recordPlayerId" type="number" placeholder="player_id" required>
+            </label>
 
-          <label>
-            <span>種目</span>
-            <select id="distance_id">
-              <option value="1">1000m</option>
-              <option value="2">1500m</option>
-              <option value="3">3000m</option>
-            </select>
-          </label>
+            <label>
+              <span>種目</span>
+              <select id="distanceId" required>
+                <option value="">選択してください</option>
+                <option value="1">1000m</option>
+                <option value="2">1500m</option>
+                <option value="3">3000m</option>
+              </select>
+            </label>
 
-          <label>
-            <span>記録</span>
-            <input id="record" type="text" placeholder="00:00:00">
-          </label>
+            <label>
+              <span>記録</span>
+              <input id="recordTime" type="text" placeholder="00:00:00" required>
+            </label>
 
-          <label>
-            <span>日付</span>
-            <input id="run_date" type="date">
-          </label>
+            <label>
+              <span>日付</span>
+              <input id="runDate" type="date" required>
+            </label>
 
-          <label class="full-width">
-            <span>備考</span>
-            <input id="notes" type="text" placeholder="備考">
-          </label>
+            <label class="full-width">
+              <span>備考</span>
+              <input id="recordNotes" type="text" placeholder="備考">
+            </label>
 
-          <button type="submit" class="primary-btn full-width">追加</button>
-        </form>
-      </section>
+            <button type="submit" class="primary-btn full-width">追加</button>
+          </form>
+        </section>
 
       <section class="card">
         <div class="card-header">
@@ -75,29 +78,35 @@
             <p class="eyebrow">Players管理</p>
             <h2>新しい選手を追加</h2>
           </div>
-        </div>
-        <form id="playerForm" class="form-grid">
-          <label>
-            <span>player_id</span>
-            <input id="player_id_input" type="number" placeholder="player_id">
-          </label>
+          <div id="playerTableContainer" class="table-block">読み込み中...</div>
+        </section>
 
-          <label>
-            <span>名前</span>
-            <input id="player_name" type="text" placeholder="名前">
-          </label>
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Players管理</p>
+              <h2>新しい選手を追加</h2>
+            </div>
+          </div>
+          <form id="playerForm" class="form-grid">
+            <label>
+              <span>player_id</span>
+              <input id="newPlayerId" type="number" placeholder="player_id" required>
+            </label>
 
-          <label>
-            <span>性別</span>
-            <select id="gender">
-              <option value="男">男</option>
-              <option value="女">女</option>
-            </select>
-          </label>
+            <label>
+              <span>名前</span>
+              <input id="newPlayerName" type="text" placeholder="名前" required>
+            </label>
 
-          <button type="submit" class="primary-btn full-width">追加</button>
-        </form>
-      </section>
+            <label>
+              <span>性別</span>
+              <select id="newPlayerGender" required>
+                <option value="">選択してください</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select>
+            </label>
 
       <section class="card">
         <div class="card-header">
@@ -105,9 +114,12 @@
             <p class="eyebrow">Players一覧</p>
             <h2>登録済み選手</h2>
           </div>
-        </div>
-        <div id="playerTableContainer" class="table-block">読み込み中...</div>
-      </section>
+          <form id="deletePlayerForm" class="inline-form">
+            <input id="deletePlayerId" type="number" placeholder="player_id" required>
+            <button type="submit" class="secondary-btn">削除</button>
+          </form>
+        </section>
+      </div>
     </main>
   </div>
 

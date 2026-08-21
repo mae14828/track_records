@@ -1,16 +1,18 @@
 const API_URL = 'http://localhost:5000/api';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('showJson');
-  if (btn) btn.addEventListener('click', loadTableJson);
+  // Initial data load
+  loadRecords();
+  loadPlayers();
+});
 
-  const form = document.getElementById('recordForm');
-  if (form) form.addEventListener('submit', insertRecord);
+// ==================== RECORDS FUNCTIONS ====================
 
   loadTableJson();
 
-  const playerForm = document.getElementById("playerForm");
-  if (playerForm) playerForm.addEventListener("submit", insertPlayer);
+    if (!recordsResponse.ok) {
+      throw new Error('記録の取得に失敗しました');
+    }
 
   loadPlayers();
 });
@@ -106,39 +108,43 @@ async function loadTableJson() {
 async function insertRecord(event) {
   event.preventDefault();
 
- /* const pre = document.getElementById('tableJson');
-  if (!pre) return;*/
+  const playerId = document.getElementById('recordPlayerId').value;
+  const distanceId = document.getElementById('distanceId').value;
+  const recordTime = document.getElementById('recordTime').value;
+  const runDate = document.getElementById('runDate').value;
+  const notes = document.getElementById('recordNotes').value;
 
-  // const id = document.getElementById('id').value
-  const player_id = document.getElementById('player_id').value
-  const distance_id = document.getElementById('distance_id').value
-  const record = document.getElementById('record').value
-  const run_date = document.getElementById('run_date').value
-  const notes = document.getElementById('notes').value
-/*
-  pre.textContent = '送信中...';
-*/
-  try {//フロントからバック、バックからフロンt、どっちもやってる
+  try {
     const response = await fetch(`${API_URL}/records`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ player_id, distance_id, record, run_date, notes })
+      body: JSON.stringify({
+        player_id: playerId,
+        distance_id: distanceId,
+        record: recordTime,
+        run_date: runDate,
+        notes: notes
+      })
     });
-    
-    const data = await response.json();
-    console.log("data", data)
-    /* pre.textContent = JSON.stringify(data, null, 2); */
 
-    await loadTableJson();
+    if (!response.ok) {
+      throw new Error('記録の追加に失敗しました');
+    }
+
+    alert('記録を追加しました');
+    document.getElementById('recordForm').reset();
+    loadRecords();
+
   } catch (error) {
-    /* pre.textContent = `エラー: ${error.message}`; */
+    alert(`エラー: ${error.message}`);
   }
 }
 
-// プレイヤー一覧を取得して表示する関数
-async function loadPlayers() {
+// Delete record
+async function deleteRecord(event) {
+  event.preventDefault();
 
   const container = document.getElementById("playerTableContainer");
 
@@ -190,44 +196,33 @@ async function loadPlayers() {
 // プレイヤーを追加する関数
 async function insertPlayer(event){
 
-  event.preventDefault();
+  try {
+    const response = await fetch(`${API_URL}/records/${recordId}`, {
+      method: 'DELETE'
+    });
 
-  const player_id = document.getElementById("player_id_input").value;
-  const player_name = document.getElementById("player_name").value;
-  const gender = document.getElementById("gender").value;
+    if (!response.ok) {
+      throw new Error('記録の削除に失敗しました');
+    }
 
-  await fetch(`${API_URL}/players`,{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      player_id,
-      player_name,
-      gender
-    })
-  });
+    alert('記録を削除しました');
+    document.getElementById('deleteRecordForm').reset();
+    loadRecords();
 
-  loadPlayers();
-
-  event.target.reset();
+  } catch (error) {
+    alert(`エラー: ${error.message}`);
+  }
 }
 
+// ==================== PLAYERS FUNCTIONS ====================
 
 // テーブルの削除ボタンから呼ばれる削除関数
 async function deleteRecordFromTable(record_id) {
   try {
-    const response = await fetch(
-      `${API_URL}/records/${record_id}`,
-      {
-        method: 'DELETE'
-      }
-    );
-
-    const data = await response.json();
+    const response = await fetch(`${API_URL}/players`);
 
     if (!response.ok) {
-      throw new Error(data.error || '削除失敗');
+      throw new Error('選手情報の取得に失敗しました');
     }
 
     alert('レコードが削除されました。');
