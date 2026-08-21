@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ランニング記録管理</title>
+  <title>ランニング記録管理App</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -72,28 +72,11 @@
           </form>
         </section>
 
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <p class="eyebrow">記録の削除</p>
-              <h2>不要な結果を削除</h2>
-            </div>
-          </div>
-          <form id="deleteRecordForm" class="inline-form">
-            <input id="deleteRecordId" type="number" placeholder="記録IDを入力" required>
-            <button type="submit" class="secondary-btn">削除</button>
-          </form>
-        </section>
-      </div>
-
-      <!-- PLAYERS SECTION -->
-      <div class="section-group players-group">
-        <section class="card hero-card">
-          <div class="card-header">
-            <div>
-              <p class="eyebrow">Players一覧</p>
-              <h2>登録済み選手</h2>
-            </div>
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Players管理</p>
+            <h2>新しい選手を追加</h2>
           </div>
           <div id="playerTableContainer" class="table-block">読み込み中...</div>
         </section>
@@ -125,16 +108,11 @@
               </select>
             </label>
 
-            <button type="submit" class="primary-btn full-width">追加</button>
-          </form>
-        </section>
-
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <p class="eyebrow">Players管理</p>
-              <h2>選手を削除</h2>
-            </div>
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Players一覧</p>
+            <h2>登録済み選手</h2>
           </div>
           <form id="deletePlayerForm" class="inline-form">
             <input id="deletePlayerId" type="number" placeholder="player_id" required>
